@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e13">
+<title>LoL 스킨 세트 퀴즈</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-title-key="pageTitle" data-legal="riot">
+<main class="wrap">
+  <h1 class="page-title" data-i18n="title"></h1>
+  <div class="game-bar">
+    <input id="answer" class="text-input" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="placeholder" disabled>
+    <button type="button" class="btn btn-primary" id="answerBtn" data-i18n="answer" disabled></button>
+    <button type="button" class="btn btn-danger" id="giveUpBtn" data-i18n="giveUp" disabled></button>
+    <div class="stat">⏱ <span id="timer">00:00</span></div>
+    <div class="stat count"><span data-i18n="correct"></span> <b id="count">0</b> / <span id="total">0</span></div>
+  </div>
+  <p class="tip" data-i18n="tip"></p>
+  <div class="status" id="status" data-i18n="loading"></div>
+  <div class="champ-grid" id="grid"></div>
+</main>
+
+<section class="modal" id="endModal" role="dialog" aria-modal="true">
+  <div class="modal-big" id="endBig"></div>
+  <div class="modal-row" id="endScore"></div>
+  <div class="modal-row"><span data-i18n="time"></span>: <span class="modal-time" id="endTime"></span></div>
+  <p class="modal-comment" id="endComment"></p>
+  <div class="modal-buttons">
+    <button type="button" class="btn" data-close data-i18n="close"></button>
+    <button type="button" class="btn btn-ok" id="restartBtn" data-i18n="restart"></button>
+  </div>
+</section>
+
+<script src="assets/js/common.js"></script>
+<script src="assets/js/name-all.js"></script>
+<script src="assets/js/lol-skinlines.js"></script>
+</body>
+</html>

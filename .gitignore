@@ -1,0 +1,4 @@
+# Private / local-only files (never upload)
+README_PRIVATE.md
+serve.ps1
+.claude/
