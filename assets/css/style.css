@@ -97,7 +97,7 @@ a{color:inherit}
 .cell.missed img{filter:grayscale(1);opacity:.5}
 .cell.missed .name{color:#ff8b96}
 .cell.pop{animation:pop .35s ease}
-/* last 5% / reveal codes: the picture (slightly dimmed) with a "?" laid over it,
+/* reveal codes: the picture (slightly dimmed) with a "?" laid over it,
    masked name below */
 .cell.final{border-style:dashed;border-color:var(--gold)}
 .cell.final .pic,.cell.final .q{grid-row:1;grid-column:1}

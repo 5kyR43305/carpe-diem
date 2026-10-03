@@ -20,8 +20,8 @@
  * number and masked name (Korean initial consonants / first letters) are shown,
  * never its picture. The next countdown starts only after the hinted item is answered.
  *
- * Final reveal: once 95% are found, every remaining cell shows a silhouette and
- * its masked name, and hints stop. "End" finishes early and shows found/total + time.
+ * Hints are locked once 90% are found (a hint that is already shown stays until answered).
+ * "End" finishes early and shows found/total + time.
  */
 (function () {
   'use strict';
@@ -43,13 +43,12 @@
       hintShown: '💡 힌트: {num}번 · {mask}',
       hintWaiting: '이 항목을 맞히면 다음 힌트 타이머가 시작돼요',
       hintNone: '💡 남은 항목은 힌트가 제공되지 않아요',
-      hintRules: '💡 첫 정답 후 3분마다 힌트를 받을 수 있어요. 힌트 버튼을 누르면 아직 못 맞힌 항목 하나의 번호와 이름 초성이 공개되고, 그 항목을 맞혀야 다음 힌트 타이머가 시작됩니다. 95%를 맞히면 남은 항목의 실루엣과 초성이 모두 공개되고, "종료" 버튼으로 언제든 결과를 볼 수 있어요.',
+      hintRules: '💡 첫 정답 후 3분마다 힌트를 받을 수 있어요. 힌트 버튼을 누르면 아직 못 맞힌 항목 하나의 번호와 이름 초성이 공개되고, 그 항목을 맞혀야 다음 힌트 타이머가 시작됩니다. 진행도가 90% 이상이면 힌트를 사용할 수 없어요. "종료" 버튼으로 언제든 결과를 볼 수 있어요.',
       earlyEnd: '종료',
       confirmEarlyEnd: '지금 게임을 끝내고 결과를 볼까요?',
       earlyEndTitle: '게임 종료',
       earlyEndComment: '정답률 {pct}%',
-      finalReveal: '🎯 95% 달성! 남은 항목의 실루엣과 초성이 공개됐어요',
-      finalToast: '95% 달성! 남은 항목이 공개됐어요',
+      hintLocked: '💡 진행도 90% 이상에서는 힌트를 사용할 수 없어요',
       cheatSil: '🔓 남은 항목의 실루엣이 공개됐어요',
       cheatMask: '🔓 남은 항목의 초성이 공개됐어요',
       cheatBoth: '🔓 남은 항목의 실루엣과 초성이 공개됐어요',
@@ -72,13 +71,12 @@
       hintShown: '💡 Hint: #{num} · {mask}',
       hintWaiting: 'Answer this one to start the next hint timer',
       hintNone: '💡 No hints are available for the remaining items',
-      hintRules: '💡 After your first correct answer, a hint unlocks every 3 minutes. Click the hint button to reveal the number of one unanswered item and the first letter of each word in its name. The next hint timer starts once you answer that item. At 95%, the silhouettes and first letters of all remaining items are revealed, and you can press "End" at any time to see your result.',
+      hintRules: '💡 After your first correct answer, a hint unlocks every 3 minutes. Click the hint button to reveal the number of one unanswered item and the first letter of each word in its name. The next hint timer starts once you answer that item. Hints are unavailable once you reach 90%. Press "End" at any time to see your result.',
       earlyEnd: 'End',
       confirmEarlyEnd: 'End the game now and see your result?',
       earlyEndTitle: 'Game over',
       earlyEndComment: '{pct}% found',
-      finalReveal: '🎯 95% reached! Silhouettes and first letters of the rest are revealed',
-      finalToast: '95% reached! The rest are revealed',
+      hintLocked: '💡 Hints are unavailable at 90% progress or more',
       cheatSil: '🔓 Silhouettes of the rest are revealed',
       cheatMask: '🔓 First letters of the rest are revealed',
       cheatBoth: '🔓 Silhouettes and first letters of the rest are revealed',
@@ -142,16 +140,16 @@
     const found = new Set();
     let finished = false;
     let commentIdx = 0;
-    // Once 95% are found, the remaining items show a silhouette and masked name.
-    const FINAL_RATIO = 0.95;
-    let finalReveal = false;
+    // No new hints once 90% are found.
+    const HINT_LOCK_RATIO = 0.9;
+    const hintsLocked = () => found.size >= Math.ceil(items.length * HINT_LOCK_RATIO);
     // Cheat state: extra reveals for unfound cells, and a paused game timer.
     const reveal = { sil: false, mask: false };
     let timePaused = false;
     let gameId = 0; // bumped on every reset
 
     // phase: 'idle' (not started / finished) | 'counting' | 'ready' (target picked, not shown) | 'shown'
-    //        | 'none' (only items without hints remain) | 'final' (95% reached, hints no longer needed)
+    //        | 'none' (only items without hints remain) | 'locked' (90% reached)
     const hint = { phase: 'idle', deadline: 0, left: 0, target: null, tick: null };
 
     grid.classList.add(cfg.gridClass || 'grid-champ');
@@ -212,13 +210,13 @@
     function paint(cell, it, animate) {
       const isFound = found.has(it.id);
       // Unfound cells can show a silhouette and/or the masked name:
-      // both at 95% (or via cheats); a shown hint adds the masked name only.
+      // via the hidden codes; a shown hint adds the masked name only.
       const isHinted = !isFound && hint.phase === 'shown' && hint.target === it;
-      const showSil = !isFound && (finalReveal || reveal.sil);
-      const showMask = !isFound && (finalReveal || reveal.mask || isHinted);
+      const showSil = !isFound && reveal.sil;
+      const showMask = !isFound && (reveal.mask || isHinted);
       cell.classList.toggle('ok', isFound);
       cell.classList.toggle('hinted', isHinted);
-      cell.classList.toggle('final', !isFound && (showSil || finalReveal || reveal.mask));
+      cell.classList.toggle('final', !isFound && (reveal.sil || reveal.mask));
       cell.querySelectorAll('.q, .pic, .name').forEach((el) => el.remove());
       if (isFound) {
         const name = document.createElement('div');
@@ -318,9 +316,9 @@
       } else if (hint.phase === 'none') {
         hintBtn.hidden = true;
         hintText.textContent = App.t('hintNone');
-      } else if (hint.phase === 'final') {
+      } else if (hint.phase === 'locked') {
         hintBtn.hidden = true;
-        hintText.textContent = finished ? '' : App.t('finalReveal');
+        hintText.textContent = finished ? '' : App.t('hintLocked');
       } else if (hint.phase === 'counting') {
         hintBtn.hidden = false;
         const ms = timePaused ? hint.left : hint.deadline - Date.now();
@@ -363,8 +361,12 @@
       if (found.size === items.length) { clearGame(); return; }
 
       if (first) { if (!timePaused) timer.start(); endBtn.disabled = false; }
-      if (!finalReveal && found.size >= Math.ceil(items.length * FINAL_RATIO)) { revealFinal(); return; }
-      if (finalReveal) return;
+      if (hintsLocked()) {
+        // Keep a hint that is already open until its item is answered; otherwise lock now.
+        const openHint = hint.phase === 'shown' && !found.has(hint.target.id);
+        if (!openHint && hint.phase !== 'locked') lockHints();
+        return;
+      }
       if (first) startHintCountdown();
       // Answering the hinted item (shown or not yet opened) restarts the countdown.
       else if (hint.target && found.has(hint.target.id)) startHintCountdown();
@@ -380,8 +382,8 @@
       return h.toString(36);
     }
     const CHEATS = {
-      '7bf6y8': () => setReveal({ sil: true }, 'cheatSil'),
-      '1n9tcj3': () => setReveal({ mask: true }, 'cheatMask'),
+      '1cgj5q0': () => setReveal({ sil: true }, 'cheatSil'),
+      'xzhy3t': () => setReveal({ mask: true }, 'cheatMask'),
       'fw96ql': () => setReveal({ sil: true, mask: true }, 'cheatBoth'),
       '1h9t8j1': toggleTime,
       'mkidqr': autoClear,
@@ -433,15 +435,13 @@
       clearGame();
     }
 
-    function revealFinal() {
-      finalReveal = true;
+    function lockHints() {
       clearInterval(hint.tick);
-      hint.phase = 'final';
+      const prev = hint.target;
+      hint.phase = 'locked';
       hint.target = null;
-      items.forEach((it) => { if (!found.has(it.id)) paint(cellOf(it), it, true); });
+      if (prev && !found.has(prev.id)) paint(cellOf(prev), prev, false);
       renderHint();
-      App.sfx('hint');
-      App.toast(App.t('finalToast'));
     }
 
     async function endEarly() {
@@ -483,7 +483,6 @@
       found.clear();
       finished = false;
       gameId++;
-      finalReveal = false;
       reveal.sil = false;
       reveal.mask = false;
       timePaused = false;
