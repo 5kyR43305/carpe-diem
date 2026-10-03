@@ -21,6 +21,7 @@
  * never its picture. The next countdown starts only after the hinted item is answered.
  *
  * Hints are locked once 90% are found (a hint that is already shown stays until answered).
+ * Strict mode (hidden code): no hints, random cell order, and a "shuffle" button.
  * "End" finishes early and shows found/total + time.
  */
 (function () {
@@ -49,6 +50,13 @@
       earlyEndTitle: '게임 종료',
       earlyEndComment: '정답률 {pct}%',
       hintLocked: '💡 진행도 90% 이상에서는 힌트를 사용할 수 없어요',
+      shuffle: '🔀 섞기',
+      hardNoHint: '🔥 하드모드 · 힌트 없음',
+      hardRules: '🔥 하드모드: 힌트가 없고 칸의 순서가 무작위예요. "섞기" 버튼을 누르면 순서를 다시 섞을 수 있어요. "종료" 버튼으로 언제든 결과를 볼 수 있어요.',
+      confirmHardOn: '하드모드로 바꾸면 진행 내용이 초기화됩니다. 계속할까요?',
+      confirmHardOff: '일반 모드로 돌아가면 진행 내용이 초기화됩니다. 계속할까요?',
+      hardOn: '🔥 하드모드가 시작됐어요',
+      hardOff: '일반 모드로 돌아왔어요',
       cheatSil: '🔓 남은 항목의 실루엣이 공개됐어요',
       cheatMask: '🔓 남은 항목의 초성이 공개됐어요',
       cheatBoth: '🔓 남은 항목의 실루엣과 초성이 공개됐어요',
@@ -77,6 +85,13 @@
       earlyEndTitle: 'Game over',
       earlyEndComment: '{pct}% found',
       hintLocked: '💡 Hints are unavailable at 90% progress or more',
+      shuffle: '🔀 Shuffle',
+      hardNoHint: '🔥 Hard mode · no hints',
+      hardRules: '🔥 Hard mode: no hints, and the cells are in random order. Press "Shuffle" to reshuffle them. Press "End" at any time to see your result.',
+      confirmHardOn: 'Switching to hard mode will reset your progress. Continue?',
+      confirmHardOff: 'Going back to normal mode will reset your progress. Continue?',
+      hardOn: '🔥 Hard mode started',
+      hardOff: 'Back to normal mode',
       cheatSil: '🔓 Silhouettes of the rest are revealed',
       cheatMask: '🔓 First letters of the rest are revealed',
       cheatBoth: '🔓 Silhouettes and first letters of the rest are revealed',
@@ -115,7 +130,9 @@
     // Hint bar goes right below the input bar.
     const hintBar = document.createElement('div');
     hintBar.className = 'hint-bar';
-    hintBar.innerHTML = '<button type="button" class="btn btn-hint" id="hintBtn" disabled></button><span class="hint-text" id="hintText"></span>';
+    hintBar.innerHTML = '<button type="button" class="btn btn-hint" id="hintBtn" disabled></button>' +
+      '<button type="button" class="btn btn-shuffle" id="shuffleBtn" data-i18n="shuffle" hidden></button>' +
+      '<span class="hint-text" id="hintText"></span>';
     document.querySelector('.game-bar').after(hintBar);
 
     // Early-end button, next to "give up".
@@ -134,6 +151,7 @@
     document.querySelector('.tip').after(rules);
     const hintBtn = $('hintBtn');
     const hintText = $('hintText');
+    const shuffleBtn = $('shuffleBtn');
 
     let items = [];
     const lookup = new Map(); // normalized name -> [items]
@@ -147,6 +165,10 @@
     const reveal = { sil: false, mask: false };
     let timePaused = false;
     let gameId = 0; // bumped on every reset
+    // Strict mode (hidden code): no hints, random cell order, "shuffle" button.
+    // Lasts until the code is entered again or the page is reloaded.
+    let strict = false;
+    let order = []; // item ids in display order while in hard mode
 
     // phase: 'idle' (not started / finished) | 'counting' | 'ready' (target picked, not shown) | 'shown'
     //        | 'none' (only items without hints remain) | 'locked' (90% reached)
@@ -173,6 +195,10 @@
     }
 
     function sorted() {
+      if (strict) {
+        const byId = new Map(items.map((it) => [it.id, it]));
+        return order.map((id) => byId.get(id));
+      }
       const locale = App.lang === 'ko' ? 'ko' : 'en';
       return items.slice().sort((a, b) => a.name[App.lang].localeCompare(b.name[App.lang], locale));
     }
@@ -310,7 +336,12 @@
       hintBtn.classList.toggle('ready', hint.phase === 'ready');
       hintBtn.disabled = hint.phase !== 'ready';
       hintText.textContent = '';
-      if (hint.phase === 'idle') {
+      shuffleBtn.hidden = !strict;
+      shuffleBtn.disabled = finished;
+      if (strict) {
+        hintBtn.hidden = true;
+        hintText.textContent = App.t('hardNoHint');
+      } else if (hint.phase === 'idle') {
         hintBtn.hidden = true;
         hintText.textContent = finished ? '' : App.t('hintIdle');
       } else if (hint.phase === 'none') {
@@ -361,6 +392,7 @@
       if (found.size === items.length) { clearGame(); return; }
 
       if (first) { if (!timePaused) timer.start(); endBtn.disabled = false; }
+      if (strict) return; // no hints in hard mode
       if (hintsLocked()) {
         // Keep a hint that is already open until its item is answered; otherwise lock now.
         const openHint = hint.phase === 'shown' && !found.has(hint.target.id);
@@ -387,6 +419,7 @@
       'fw96ql': () => setReveal({ sil: true, mask: true }, 'cheatBoth'),
       '1h9t8j1': toggleTime,
       'mkidqr': autoClear,
+      'x2fpof': toggleStrict,
     };
 
     function runCheat(key) {
@@ -401,6 +434,34 @@
       Object.assign(reveal, flags);
       items.forEach((it) => { if (!found.has(it.id)) paint(cellOf(it), it, false); });
       App.toast(App.t(msgKey));
+    }
+
+    // Switching mode always starts a new game (asks first when there is progress).
+    async function toggleStrict() {
+      if (App.hasProgress() && !(await App.confirm(App.t(strict ? 'confirmHardOff' : 'confirmHardOn')))) {
+        input.focus();
+        return;
+      }
+      strict = !strict;
+      reset();
+      App.toast(App.t(strict ? 'hardOn' : 'hardOff'));
+    }
+
+    function shuffleOrder() {
+      order = App.shuffle(items).map((it) => it.id);
+    }
+
+    function reshuffle() {
+      if (!strict || finished) return;
+      shuffleOrder();
+      render();
+      input.focus();
+    }
+
+    function applyModeLook() {
+      document.body.classList.toggle('hard', strict);
+      rules.dataset.i18n = strict ? 'hardRules' : 'hintRules';
+      rules.textContent = App.t(rules.dataset.i18n);
     }
 
     function toggleTime() {
@@ -495,6 +556,8 @@
       App.closeModals();
       input.value = '';
       buildLookup();
+      if (strict) shuffleOrder();
+      applyModeLook();
       render();
       renderHint();
       input.disabled = false;
@@ -515,6 +578,7 @@
     endBtn.addEventListener('click', endEarly);
     $('restartBtn').addEventListener('click', reset);
     hintBtn.addEventListener('click', showHint);
+    shuffleBtn.addEventListener('click', reshuffle);
 
     App.hasProgress = () => found.size > 0 || finished;
     App.mountChrome();

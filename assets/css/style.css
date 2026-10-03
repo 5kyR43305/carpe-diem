@@ -115,6 +115,10 @@ a{color:inherit}
 .btn-hint{height:36px;font-size:13px;color:var(--muted);background:var(--panel)}
 .btn-hint.ready{color:#1a1204;background:var(--gold);border-color:var(--gold);animation:hintPulse 1.4s ease-in-out infinite}
 .hint-text{color:var(--muted);font-size:13px;font-weight:700}
+/* hard mode */
+.btn-shuffle{height:36px;font-size:13px;background:#2a1430;border-color:#5b2a66;color:#e3a6ff}
+body.hard .page-title::after{content:" 🔥 HARD";color:#ff6b3d;font-size:.6em;vertical-align:middle}
+body.hard .hint-text{color:#ff8a5c}
 .hint-text b{display:block;color:var(--gold);font-size:17px}
 .hint-text small{display:block;font-weight:600;margin-top:2px}
 @keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
