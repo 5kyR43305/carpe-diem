@@ -7,6 +7,7 @@
  *           (aliases: {ko:[...], en:[...]} extra accepted answers, skipped if they
  *            equal another item's full name)
  *           (noHint: never pick this item as a hint)
+ *   id: optional quiz id for best records (defaults to the page file name),
  *   gridClass: 'grid-champ' | 'grid-tile' | 'grid-weapon',
  * })
  *
@@ -16,13 +17,16 @@
  * punctuation are ignored). Items sharing a name are revealed together.
  *
  * Hints: every 3 minutes (counted from the first correct answer) one random
- * unfound item is picked. When the player clicks the hint button, its cell
- * number and masked name (Korean initial consonants / first letters) are shown,
- * never its picture. The next countdown starts only after the hinted item is answered.
+ * unfound item is picked. The player then chooses what to reveal for it: the
+ * masked name (Korean initial consonants / first letters) or its silhouette
+ * (picture with a "?" over it); the cell number is shown either way.
+ * The next countdown starts only after the hinted item is answered.
  *
  * Hints are locked once 90% are found (a hint that is already shown stays until answered).
  * Strict mode (hidden code): no hints, random cell order, and a "shuffle" button.
- * "End" finishes early and shows found/total + time.
+ * "End" finishes early, shows found/total + time and reveals the missed items.
+ * Best records are kept in localStorage per quiz and per mode (normal / hard);
+ * games where any hidden code other than hard mode was used are not recorded.
  */
 (function () {
   'use strict';
@@ -39,16 +43,18 @@
       scoreLine: '정답 {n} / {total}',
       hintIdle: '💡 첫 정답을 맞히면 힌트 타이머가 시작돼요',
       hintCounting: '💡 다음 힌트까지 {time}',
-      hintReady: '💡 힌트 보기',
+      hintPickMask: '💡 초성 보기',
+      hintPickSil: '🖼 실루엣 보기',
+      hintShownSil: '💡 힌트: {num}번 · 실루엣 공개',
       hintReadyToast: '힌트가 준비됐어요!',
       hintShown: '💡 힌트: {num}번 · {mask}',
       hintWaiting: '이 항목을 맞히면 다음 힌트 타이머가 시작돼요',
       hintNone: '💡 남은 항목은 힌트가 제공되지 않아요',
-      hintRules: '💡 첫 정답 후 3분마다 힌트를 받을 수 있어요. 힌트 버튼을 누르면 아직 못 맞힌 항목 하나의 번호와 이름 초성이 공개되고, 그 항목을 맞혀야 다음 힌트 타이머가 시작됩니다. 진행도가 90% 이상이면 힌트를 사용할 수 없어요. "종료" 버튼으로 언제든 결과를 볼 수 있어요.',
+      hintRules: '💡 첫 정답 후 3분마다 힌트를 받을 수 있어요. 힌트가 준비되면 아직 못 맞힌 항목 하나의 번호와 함께 "초성" 또는 "실루엣" 중 하나를 골라 볼 수 있고, 그 항목을 맞혀야 다음 힌트 타이머가 시작됩니다. 진행도가 90% 이상이면 힌트를 사용할 수 없어요. "종료" 버튼으로 언제든 결과를 볼 수 있어요.',
       earlyEnd: '종료',
       confirmEarlyEnd: '지금 게임을 끝내고 결과를 볼까요?',
       earlyEndTitle: '게임 종료',
-      earlyEndComment: '정답률 {pct}%',
+      earlyEndComment: '정답률 {pct}% · 창을 닫으면 못 맞힌 정답을 볼 수 있어요',
       hintLocked: '💡 진행도 90% 이상에서는 힌트를 사용할 수 없어요',
       shuffle: '🔀 섞기',
       hardNoHint: '🔥 하드모드 · 힌트 없음',
@@ -60,6 +66,7 @@
       cheatSil: '🔓 남은 항목의 실루엣이 공개됐어요',
       cheatMask: '🔓 남은 항목의 초성이 공개됐어요',
       cheatBoth: '🔓 남은 항목의 실루엣과 초성이 공개됐어요',
+      cheatBlocked: '🔒 이 명령어는 지금 사용할 수 없어요',
       cheatPause: '⏸ 시간이 멈췄어요',
       cheatResume: '▶ 시간이 다시 흐릅니다',
     },
@@ -74,16 +81,18 @@
       scoreLine: '{n} / {total} found',
       hintIdle: '💡 The hint timer starts with your first correct answer',
       hintCounting: '💡 Next hint in {time}',
-      hintReady: '💡 Show hint',
+      hintPickMask: '💡 First letters',
+      hintPickSil: '🖼 Silhouette',
+      hintShownSil: '💡 Hint: #{num} · silhouette shown',
       hintReadyToast: 'A hint is ready!',
       hintShown: '💡 Hint: #{num} · {mask}',
       hintWaiting: 'Answer this one to start the next hint timer',
       hintNone: '💡 No hints are available for the remaining items',
-      hintRules: '💡 After your first correct answer, a hint unlocks every 3 minutes. Click the hint button to reveal the number of one unanswered item and the first letter of each word in its name. The next hint timer starts once you answer that item. Hints are unavailable once you reach 90%. Press "End" at any time to see your result.',
+      hintRules: '💡 After your first correct answer, a hint unlocks every 3 minutes. When a hint is ready, choose either the first letters or the silhouette of one unanswered item (its number is shown too). The next hint timer starts once you answer that item. Hints are unavailable once you reach 90%. Press "End" at any time to see your result.',
       earlyEnd: 'End',
       confirmEarlyEnd: 'End the game now and see your result?',
       earlyEndTitle: 'Game over',
-      earlyEndComment: '{pct}% found',
+      earlyEndComment: '{pct}% found · close this window to see what you missed',
       hintLocked: '💡 Hints are unavailable at 90% progress or more',
       shuffle: '🔀 Shuffle',
       hardNoHint: '🔥 Hard mode · no hints',
@@ -95,29 +104,13 @@
       cheatSil: '🔓 Silhouettes of the rest are revealed',
       cheatMask: '🔓 First letters of the rest are revealed',
       cheatBoth: '🔓 Silhouettes and first letters of the rest are revealed',
+      cheatBlocked: '🔒 This code can\'t be used right now',
       cheatPause: '⏸ Time stopped',
       cheatResume: '▶ Time is running again',
     },
   });
 
-  const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
-
-  /** Hide a name: Hangul -> initial consonants, Latin words -> first letter + blanks. */
-  function maskName(name) {
-    return name.split(/\s+/).map((word) => {
-      let shownLatin = false;
-      return [...word].map((ch) => {
-        const code = ch.charCodeAt(0);
-        if (code >= 0xac00 && code <= 0xd7a3) return CHO[Math.floor((code - 0xac00) / 588)];
-        if (/[A-Za-z]/.test(ch)) {
-          if (shownLatin) return '_';
-          shownLatin = true;
-          return ch;
-        }
-        return ch; // digits and punctuation stay visible
-      }).join('');
-    }).join(' ');
-  }
+  const maskName = App.maskName;
 
   function mount(cfg) {
     const $ = (id) => document.getElementById(id);
@@ -131,6 +124,8 @@
     const hintBar = document.createElement('div');
     hintBar.className = 'hint-bar';
     hintBar.innerHTML = '<button type="button" class="btn btn-hint" id="hintBtn" disabled></button>' +
+      '<button type="button" class="btn btn-hint ready" id="hintMaskBtn" data-i18n="hintPickMask" hidden></button>' +
+      '<button type="button" class="btn btn-hint ready" id="hintSilBtn" data-i18n="hintPickSil" hidden></button>' +
       '<button type="button" class="btn btn-shuffle" id="shuffleBtn" data-i18n="shuffle" hidden></button>' +
       '<span class="hint-text" id="hintText"></span>';
     document.querySelector('.game-bar').after(hintBar);
@@ -149,7 +144,17 @@
     rules.className = 'tip tip-hint';
     rules.dataset.i18n = 'hintRules';
     document.querySelector('.tip').after(rules);
-    const hintBtn = $('hintBtn');
+
+    // Best record line on the page, and a record line in the result window.
+    const bestLine = document.createElement('p');
+    bestLine.className = 'tip best-line';
+    rules.after(bestLine);
+    const endBest = document.createElement('p');
+    endBest.className = 'modal-best';
+    document.querySelector('#endModal .modal-buttons').before(endBest);
+
+    const hintBtn = $('hintBtn'); // countdown display
+    const hintPickBtns = [$('hintMaskBtn'), $('hintSilBtn')];
     const hintText = $('hintText');
     const shuffleBtn = $('shuffleBtn');
 
@@ -169,10 +174,15 @@
     // Lasts until the code is entered again or the page is reloaded.
     let strict = false;
     let order = []; // item ids in display order while in hard mode
+    // After "End", unanswered items are shown (dimmed, red names).
+    let showMissed = false;
+    // Any hidden code other than hard mode marks the game as not eligible for records.
+    let cheated = false;
 
     // phase: 'idle' (not started / finished) | 'counting' | 'ready' (target picked, not shown) | 'shown'
     //        | 'none' (only items without hints remain) | 'locked' (90% reached)
-    const hint = { phase: 'idle', deadline: 0, left: 0, target: null, tick: null };
+    // kind: what the player chose to reveal for the hinted item — 'mask' (initials) or 'sil' (silhouette).
+    const hint = { phase: 'idle', deadline: 0, left: 0, target: null, kind: 'mask', tick: null };
 
     grid.classList.add(cfg.gridClass || 'grid-champ');
 
@@ -237,14 +247,17 @@
       const isFound = found.has(it.id);
       // Unfound cells can show a silhouette and/or the masked name:
       // via the hidden codes; a shown hint adds the masked name only.
-      const isHinted = !isFound && hint.phase === 'shown' && hint.target === it;
-      const showSil = !isFound && reveal.sil;
-      const showMask = !isFound && (reveal.mask || isHinted);
+      const isMissed = !isFound && showMissed;
+      const isHinted = !isFound && !isMissed && hint.phase === 'shown' && hint.target === it;
+      const showSil = !isFound && !isMissed && (reveal.sil || (isHinted && hint.kind === 'sil'));
+      const showMask = !isFound && !isMissed && (reveal.mask || (isHinted && hint.kind === 'mask'));
       cell.classList.toggle('ok', isFound);
+      cell.classList.toggle('missed', isMissed);
       cell.classList.toggle('hinted', isHinted);
-      cell.classList.toggle('final', !isFound && (reveal.sil || reveal.mask));
+      cell.classList.toggle('final', !isFound && !isMissed && (reveal.sil || reveal.mask));
       cell.querySelectorAll('.q, .pic, .name').forEach((el) => el.remove());
-      if (isFound) {
+      if (isFound || isMissed) {
+        // Found, or revealed after "End" (dimmed, red name).
         const name = document.createElement('div');
         name.className = 'name';
         name.textContent = it.name[App.lang];
@@ -312,6 +325,10 @@
     function hintTick() {
       if (hint.phase !== 'counting') return;
       if (Date.now() < hint.deadline) { renderHint(); return; }
+      hintReadyNow();
+    }
+
+    function hintReadyNow() {
       clearInterval(hint.tick);
       const pool = hintCandidates();
       if (!pool.length) { hint.phase = 'none'; renderHint(); return; }
@@ -322,9 +339,10 @@
       renderHint();
     }
 
-    function showHint() {
+    function showHint(kind) {
       if (hint.phase !== 'ready') return;
       hint.phase = 'shown';
+      hint.kind = kind;
       const cell = cellOf(hint.target);
       paint(cell, hint.target, true);
       cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -333,8 +351,8 @@
     }
 
     function renderHint() {
-      hintBtn.classList.toggle('ready', hint.phase === 'ready');
-      hintBtn.disabled = hint.phase !== 'ready';
+      hintBtn.disabled = true;
+      hintPickBtns.forEach((b) => { b.hidden = strict || hint.phase !== 'ready'; });
       hintText.textContent = '';
       shuffleBtn.hidden = !strict;
       shuffleBtn.disabled = finished;
@@ -356,13 +374,14 @@
         const left = Math.max(0, Math.ceil(ms / 1000));
         hintBtn.textContent = App.t('hintCounting', { time: App.fmtTime(left) });
       } else if (hint.phase === 'ready') {
-        hintBtn.hidden = false;
-        hintBtn.textContent = App.t('hintReady');
+        hintBtn.hidden = true; // the two choice buttons are shown instead
       } else {
         hintBtn.hidden = true;
         const num = cellOf(hint.target).dataset.num;
         const strong = document.createElement('b');
-        strong.textContent = App.t('hintShown', { num, mask: maskName(hint.target.name[App.lang]) });
+        strong.textContent = hint.kind === 'sil'
+          ? App.t('hintShownSil', { num })
+          : App.t('hintShown', { num, mask: maskName(hint.target.name[App.lang]) });
         const small = document.createElement('small');
         small.textContent = App.t('hintWaiting');
         hintText.append(strong, small);
@@ -408,24 +427,28 @@
 
     /* ---------- hidden codes ---------- */
     // Only fingerprints are stored so the codes can't be read from the source.
-    function fingerprint(s) {
-      let h = 0x811c9dc5;
-      for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
-      return h.toString(36);
-    }
     const CHEATS = {
-      '1cgj5q0': () => setReveal({ sil: true }, 'cheatSil'),
-      'xzhy3t': () => setReveal({ mask: true }, 'cheatMask'),
+      // The two single reveals can't be combined (nor used after "both"); the "both" code is the way to get both.
+      '1cgj5q0': () => (reveal.mask ? false : setReveal({ sil: true }, 'cheatSil')),
+      'xzhy3t': () => (reveal.sil ? false : setReveal({ mask: true }, 'cheatMask')),
       'fw96ql': () => setReveal({ sil: true, mask: true }, 'cheatBoth'),
       '1h9t8j1': toggleTime,
       'mkidqr': autoClear,
       'x2fpof': toggleStrict,
+      // Skip the rest of the hint countdown (only while it is counting).
+      '13so5y1': () => (strict || hint.phase !== 'counting' ? false : hintReadyNow()),
     };
 
     function runCheat(key) {
-      const fn = CHEATS[fingerprint(key)];
+      const fn = CHEATS[App.fingerprint(key)];
       if (!fn) return false;
-      fn();
+      // A code returning false was refused (e.g. combining the two single reveals).
+      if (fn() === false) {
+        App.sfx('bad');
+        App.toast(App.t('cheatBlocked'));
+        return true;
+      }
+      if (fn !== toggleStrict) cheated = true;
       App.sfx('hint');
       return true;
     }
@@ -482,7 +505,7 @@
       endBtn.disabled = true;
       stopHints();
       const rest = sorted().filter((it) => !found.has(it.id));
-      const delay = Math.min(120, 6000 / Math.max(1, rest.length)); // up to ~6 s in total
+      const delay = Math.min(480, 24000 / Math.max(1, rest.length)); // up to ~24 s in total
       const game = gameId;
       for (const it of rest) {
         if (game !== gameId) return; // the game was reset meanwhile
@@ -505,6 +528,26 @@
       renderHint();
     }
 
+    /* ---------- best records (per quiz, normal / hard separately) ---------- */
+    const quizId = cfg.id || location.pathname.split('/').pop().replace(/\.html$/, '') || 'index';
+    const modeKey = () => (strict ? 'hard' : 'normal');
+
+    function saveRecord() {
+      if (cheated) return { status: 'cheated' };
+      return App.records.submit(quizId, modeKey(), { n: found.size, total: items.length, sec: timer.sec });
+    }
+
+    function renderBest() {
+      const r = App.records.load(quizId, modeKey());
+      const mode = App.t(strict ? 'modeHard' : 'modeNormal');
+      bestLine.textContent = r ? App.t('bestLine', { mode, value: App.records.format(r) }) : App.t('bestNone', { mode });
+    }
+
+    function showRecordResult(result) {
+      App.records.show(endBest, result);
+      renderBest();
+    }
+
     async function endEarly() {
       if (finished || !found.size) return;
       if (!(await App.confirm(App.t('confirmEarlyEnd')))) { input.focus(); return; }
@@ -520,6 +563,10 @@
       $('endScore').textContent = App.t('scoreLine', { n: found.size, total: items.length });
       $('endTime').textContent = App.fmtTime(timer.sec);
       $('endComment').textContent = App.t('earlyEndComment', { pct });
+      showRecordResult(saveRecord());
+      // Reveal what was missed.
+      showMissed = true;
+      items.forEach((it) => { if (!found.has(it.id)) paint(cellOf(it), it, false); });
       App.openModal('endModal');
     }
 
@@ -536,6 +583,7 @@
       $('endScore').textContent = App.t('scoreLine', { n: found.size, total: items.length });
       $('endTime').textContent = App.fmtTime(timer.sec);
       $('endComment').textContent = App.t('clearComments')[commentIdx];
+      showRecordResult(saveRecord());
       App.sfx('win');
       App.openModal('endModal');
     }
@@ -546,6 +594,8 @@
       gameId++;
       reveal.sil = false;
       reveal.mask = false;
+      showMissed = false;
+      cheated = false;
       timePaused = false;
       $('timer').parentElement.classList.remove('paused');
       endBtn.disabled = true; // enabled after the first correct answer
@@ -558,6 +608,7 @@
       buildLookup();
       if (strict) shuffleOrder();
       applyModeLook();
+      renderBest();
       render();
       renderHint();
       input.disabled = false;
@@ -577,7 +628,8 @@
     $('giveUpBtn').addEventListener('click', giveUp);
     endBtn.addEventListener('click', endEarly);
     $('restartBtn').addEventListener('click', reset);
-    hintBtn.addEventListener('click', showHint);
+    $('hintMaskBtn').addEventListener('click', () => showHint('mask'));
+    $('hintSilBtn').addEventListener('click', () => showHint('sil'));
     shuffleBtn.addEventListener('click', reshuffle);
 
     App.hasProgress = () => found.size > 0 || finished;

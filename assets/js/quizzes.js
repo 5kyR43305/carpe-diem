@@ -17,6 +17,17 @@ window.QUIZZES = [
     image: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_0.jpg',
   },
   {
+    href: 'lol-titles.html',
+    game: 'lol',
+    tag: { ko: '리그 오브 레전드', en: 'League of Legends' },
+    title: { ko: '챔피언 칭호 맞추기', en: 'Champions by Title' },
+    desc: {
+      ko: '칭호만 보고 어떤 챔피언인지 맞혀 보세요.',
+      en: 'Name each champion from its title alone.',
+    },
+    image: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg',
+  },
+  {
     href: 'valorant-collections.html',
     game: 'val',
     tag: { ko: '발로란트', en: 'VALORANT' },

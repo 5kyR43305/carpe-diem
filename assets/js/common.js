@@ -35,6 +35,17 @@
       langResetConfirm: '언어 설정을 바꾸면 진행 내용이 초기화됩니다. 계속할까요?',
       ok: '확인',
       cancel: '취소',
+      modeNormal: '일반',
+      modeHard: '하드',
+      recordValue: '{n} / {total} · {time}',
+      bestLine: '🏆 최고 기록 ({mode}): {value}',
+      bestNone: '🏆 최고 기록 ({mode}): 아직 없어요',
+      bestLineSimple: '🏆 최고 기록: {value}',
+      bestNoneSimple: '🏆 최고 기록: 아직 없어요',
+      recordNew: '🏆 새 최고 기록!',
+      recordPrev: '(이전: {value})',
+      recordKept: '🏆 최고 기록: {value}',
+      recordCheated: '⚠ 명령어를 사용한 게임이라 기록되지 않았어요',
       langNote: '언어를 바꾸면 진행 내용이 초기화됩니다',
       disclaimerCommon: '이 사이트는 비공식 팬 사이트이며, 어떤 게임사의 승인이나 후원도 받지 않았습니다. 각 게임의 이미지, 명칭, 상표에 대한 권리는 해당 게임사에 있습니다.',
       disclaimer: '이 사이트는 비공식 팬 콘텐츠이며 Riot Games의 승인이나 후원을 받지 않았습니다. Riot Games의 "Legal Jibber Jabber" 정책에 따라 Riot Games 소유 자산을 사용합니다. League of Legends와 VALORANT는 Riot Games, Inc.의 상표입니다.',
@@ -53,6 +64,17 @@
       langResetConfirm: 'Changing the language will reset your progress. Continue?',
       ok: 'OK',
       cancel: 'Cancel',
+      modeNormal: 'normal',
+      modeHard: 'hard',
+      recordValue: '{n} / {total} · {time}',
+      bestLine: '🏆 Best ({mode}): {value}',
+      bestNone: '🏆 Best ({mode}): none yet',
+      bestLineSimple: '🏆 Best: {value}',
+      bestNoneSimple: '🏆 Best: none yet',
+      recordNew: '🏆 New best!',
+      recordPrev: '(previous: {value})',
+      recordKept: '🏆 Best: {value}',
+      recordCheated: '⚠ Not recorded because a code was used',
       langNote: 'Changing the language resets your progress',
       disclaimerCommon: 'This is an unofficial fan site and is not endorsed or sponsored by any game publisher. All game images, names and trademarks belong to their respective owners.',
       disclaimer: 'This is an unofficial fan project and is not endorsed or sponsored by Riot Games. It was created under Riot Games\' "Legal Jibber Jabber" policy using assets owned by Riot Games. League of Legends and VALORANT are trademarks of Riot Games, Inc.',
@@ -242,6 +264,39 @@
     },
 
 
+    /**
+     * Best records in localStorage, per quiz and mode. More found is better;
+     * with the same count, a shorter time is better.
+     */
+    records: {
+      key: (quiz, mode) => `rq-best:${quiz}:${mode}`,
+      load(quiz, mode) {
+        try { return JSON.parse(localStorage.getItem(App.records.key(quiz, mode))); } catch (e) { return null; }
+      },
+      /** Saves cur ({n, total, sec}) if it beats the previous one. Returns {status:'new'|'kept', prev}. */
+      submit(quiz, mode, cur) {
+        const prev = App.records.load(quiz, mode);
+        const better = !prev || cur.n > prev.n || (cur.n === prev.n && cur.sec < prev.sec);
+        if (!better) return { status: 'kept', prev };
+        try { localStorage.setItem(App.records.key(quiz, mode), JSON.stringify(Object.assign({ at: Date.now() }, cur))); } catch (e) { /* storage unavailable */ }
+        return { status: 'new', prev };
+      },
+      format: (r) => App.t('recordValue', { n: r.n, total: r.total, time: App.fmtTime(r.sec) }),
+      /** Writes a record result into a result-window element (classes: new / warn). */
+      show(el, result) {
+        el.className = 'modal-best';
+        if (result.status === 'cheated') {
+          el.textContent = App.t('recordCheated');
+          el.classList.add('warn');
+        } else if (result.status === 'new') {
+          el.textContent = App.t('recordNew') + (result.prev ? ' ' + App.t('recordPrev', { value: App.records.format(result.prev) }) : '');
+          el.classList.add('new');
+        } else {
+          el.textContent = App.t('recordKept', { value: App.records.format(result.prev) });
+        }
+      },
+    },
+
     fmtTime(sec) {
       const m = Math.floor(sec / 60);
       const s = sec % 60;
@@ -251,6 +306,31 @@
     /** Normalize an answer: case/width/spacing/punctuation-insensitive. */
     norm(v) {
       return String(v || '').normalize('NFKC').toLowerCase().replace(/[\s'’`".,·・ㆍ:;!?&＆_\-/\\()[\]]/g, '');
+    },
+
+    /** Fingerprint (FNV-1a, base 36) used to recognise hidden codes without storing them. */
+    fingerprint(s) {
+      let h = 0x811c9dc5;
+      for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+      return h.toString(36);
+    },
+
+    /** Hide a name for hints: Hangul -> initial consonants, Latin words -> first letter + blanks. */
+    maskName(name) {
+      const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+      return name.split(/\s+/).map((word) => {
+        let shownLatin = false;
+        return [...word].map((ch) => {
+          const code = ch.charCodeAt(0);
+          if (code >= 0xac00 && code <= 0xd7a3) return CHO[Math.floor((code - 0xac00) / 588)];
+          if (/[A-Za-z]/.test(ch)) {
+            if (shownLatin) return '_';
+            shownLatin = true;
+            return ch;
+          }
+          return ch; // digits and punctuation stay visible
+        }).join('');
+      }).join(' ');
     },
 
     shuffle(arr) {

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e13">
+<title>LoL 챔피언 칭호 퀴즈</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-title-key="pageTitle" data-legal="riot">
+<main class="wrap tq">
+  <h1 class="page-title" data-i18n="title"></h1>
+  <div class="tq-stats">
+    <span><span data-i18n="statFound"></span> <b id="count">0</b></span>
+    <span><span data-i18n="statLeft"></span> <b id="left">0</b></span>
+    <span>⏱ <span id="timer">00:00</span></span>
+  </div>
+  <div class="hint-bar">
+    <button type="button" class="btn btn-hint" id="hintBtn" disabled hidden></button>
+    <button type="button" class="btn btn-hint ready" id="hintMaskBtn" data-i18n="hintPickMask" hidden></button>
+    <button type="button" class="btn btn-hint ready" id="hintSilBtn" data-i18n="hintPickSil" hidden></button>
+    <span class="hint-text" id="hintText"></span>
+  </div>
+  <div class="status" id="status" data-i18n="loading"></div>
+
+  <section class="tq-card" id="card" hidden>
+    <div class="tq-label" data-i18n="cardLabel"></div>
+    <div class="tq-title" id="clue"></div>
+    <div class="tq-hint" id="cardHint" hidden></div>
+  </section>
+  <div class="tq-form">
+    <input id="answer" class="text-input" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="placeholder" disabled>
+    <button type="button" class="btn btn-primary" id="answerBtn" data-i18n="answer" disabled></button>
+    <button type="button" class="btn" id="skipBtn" data-i18n="skip" disabled></button>
+  </div>
+  <div class="tq-feedback" id="feedback"></div>
+  <div class="tq-actions">
+    <button type="button" class="btn btn-danger" id="giveUpBtn" data-i18n="giveUp" disabled></button>
+    <button type="button" class="btn btn-end" id="endBtn" data-i18n="earlyEnd" disabled></button>
+  </div>
+  <p class="tip" data-i18n="tip"></p>
+  <p class="tip tip-hint" data-i18n="hintRules"></p>
+  <p class="tip best-line" id="best"></p>
+
+  <section class="tq-missed" id="missedBox" hidden>
+    <h3 data-i18n="missedTitle"></h3>
+    <div class="tq-missed-list" id="missedList"></div>
+  </section>
+</main>
+
+<section class="modal" id="endModal" role="dialog" aria-modal="true">
+  <div class="modal-big" id="endBig"></div>
+  <div class="modal-row" id="endScore"></div>
+  <div class="modal-row"><span data-i18n="time"></span>: <span class="modal-time" id="endTime"></span></div>
+  <p class="modal-comment" id="endComment"></p>
+  <p class="modal-best" id="endBest"></p>
+  <div class="modal-buttons">
+    <button type="button" class="btn" data-close data-i18n="close"></button>
+    <button type="button" class="btn btn-ok" id="restartBtn" data-i18n="restart"></button>
+  </div>
+</section>
+
+<script src="assets/js/common.js"></script>
+<script src="assets/js/lol-titles.js"></script>
+</body>
+</html>
