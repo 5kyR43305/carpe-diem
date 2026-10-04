@@ -23,7 +23,7 @@
 
   const STRINGS = {
     ko: {
-      brand: 'Game Quiz',
+      brand: 'Carpe Diem',
       home: '홈',
       soundOn: '효과음 켜짐',
       soundOff: '효과음 꺼짐',
@@ -47,12 +47,12 @@
       recordKept: '🏆 최고 기록: {value}',
       recordCheated: '⚠ 명령어를 사용한 게임이라 기록되지 않았어요',
       langNote: '언어를 바꾸면 진행 내용이 초기화됩니다',
-      disclaimerCommon: '이 사이트는 비공식 팬 사이트이며, 어떤 게임사의 승인이나 후원도 받지 않았습니다. 각 게임의 이미지, 명칭, 상표에 대한 권리는 해당 게임사에 있습니다.',
+      disclaimerCommon: '게임과 관련된 내용은 비공식이며, 어떤 게임사의 승인이나 후원도 받지 않았습니다. 각 게임의 이미지, 명칭, 상표에 대한 권리는 해당 게임사에 있습니다.',
       disclaimer: '이 사이트는 비공식 팬 콘텐츠이며 Riot Games의 승인이나 후원을 받지 않았습니다. Riot Games의 "Legal Jibber Jabber" 정책에 따라 Riot Games 소유 자산을 사용합니다. League of Legends와 VALORANT는 Riot Games, Inc.의 상표입니다.',
       dataSource: '데이터 출처',
     },
     en: {
-      brand: 'Game Quiz',
+      brand: 'Carpe Diem',
       home: 'Home',
       soundOn: 'Sound on',
       soundOff: 'Sound off',
@@ -76,7 +76,7 @@
       recordKept: '🏆 Best: {value}',
       recordCheated: '⚠ Not recorded because a code was used',
       langNote: 'Changing the language resets your progress',
-      disclaimerCommon: 'This is an unofficial fan site and is not endorsed or sponsored by any game publisher. All game images, names and trademarks belong to their respective owners.',
+      disclaimerCommon: 'All game-related content is unofficial and not endorsed or sponsored by any game publisher. All game images, names and trademarks belong to their respective owners.',
       disclaimer: 'This is an unofficial fan project and is not endorsed or sponsored by Riot Games. It was created under Riot Games\' "Legal Jibber Jabber" policy using assets owned by Riot Games. League of Legends and VALORANT are trademarks of Riot Games, Inc.',
       dataSource: 'Data',
     },
@@ -157,7 +157,7 @@
       const top = document.createElement('header');
       top.className = 'topbar';
       top.innerHTML =
-        '<a class="brand" href="index.html"><img class="brand-logo" src="assets/img/logo.png" alt="Game Quiz"><span class="brand-text" data-i18n="brand"></span></a>' +
+        '<a class="brand" href="index.html"><img class="brand-logo" src="assets/img/logo.png" alt="Carpe Diem"><span class="brand-text" data-i18n="brand"></span></a>' +
         '<div class="controls">' +
         '<div class="seg" id="langSeg"><button type="button" data-lang="ko">한국어</button><button type="button" data-lang="en">EN</button></div>' +
         '<button type="button" class="icon-btn" id="soundBtn"></button>' +

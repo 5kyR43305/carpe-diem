@@ -4,7 +4,7 @@
 
   App.addStrings({
     ko: {
-      pageTitle: '발로란트 스킨 컬렉션 이름 맞추기 · Game Quiz',
+      pageTitle: '발로란트 스킨 컬렉션 이름 맞추기 · Carpe Diem',
       title: '발로란트 스킨 컬렉션 전부 말할 수 있을까?',
       placeholder: '컬렉션 이름 입력',
       tip: '스킨 컬렉션의 한국어 이름을 입력하고 Enter 또는 정답 버튼을 누르세요.',
@@ -13,7 +13,7 @@
       clearComments: ['컬렉션 박사 인정!', '모든 컬렉션을 기억하다니, 상점 단골이네요.', '완벽 클리어! 진정한 스킨 수집가.'],
     },
     en: {
-      pageTitle: 'Name Every VALORANT Collection · Game Quiz',
+      pageTitle: 'Name Every VALORANT Collection · Carpe Diem',
       title: 'Can You Name Every VALORANT Skin Collection?',
       placeholder: 'Type a collection name',
       tip: 'Type the English name of a skin collection and press Enter or the button.',

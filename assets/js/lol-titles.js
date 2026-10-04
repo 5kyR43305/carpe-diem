@@ -9,7 +9,7 @@
 
   App.addStrings({
     ko: {
-      pageTitle: 'LoL 챔피언 칭호 퀴즈 · Game Quiz',
+      pageTitle: 'LoL 챔피언 칭호 퀴즈 · Carpe Diem',
       title: '칭호만 보고 챔피언을 맞힐 수 있을까?',
       statFound: '맞춘 수',
       statLeft: '남은 수',
@@ -50,7 +50,7 @@
       clearComments: ['칭호만 보고 전부 맞히다니, 룬테라 역사학자 인정!', '모든 칭호를 꿰뚫고 있네요.', '완벽 클리어! 챔피언 도감 마스터.'],
     },
     en: {
-      pageTitle: 'LoL Champion Titles Quiz · Game Quiz',
+      pageTitle: 'LoL Champion Titles Quiz · Carpe Diem',
       title: 'Can You Name Every Champion From Its Title?',
       statFound: 'Found',
       statLeft: 'Left',

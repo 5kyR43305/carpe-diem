@@ -7,12 +7,12 @@
 
   App.addStrings({
     ko: {
-      pageTitle: 'LoL 챔피언 랜덤 뽑기 · Game Quiz',
+      pageTitle: 'LoL 챔피언 랜덤 뽑기 · Carpe Diem',
       title: '리그 오브 레전드 챔피언 랜덤 뽑기',
       sub: '뽑을 인원과 주 역할군별 인원을 정하고 뽑기를 눌러 보세요. 포지션도 함께 추첨할 수 있어요.',
     },
     en: {
-      pageTitle: 'LoL Random Champion Picker · Game Quiz',
+      pageTitle: 'LoL Random Champion Picker · Carpe Diem',
       title: 'League of Legends Random Champion Picker',
       sub: 'Choose how many champions and how many per main role, then draw. You can draw positions too.',
     },

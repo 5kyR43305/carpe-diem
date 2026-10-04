@@ -1,10 +1,10 @@
-# Game Quiz
+# Carpe Diem (CPDM)
 
-게임에 대해 얼마나 알고 계신가요? 기억만으로 이름을 전부 맞혀 보는 게임 퀴즈 사이트입니다.
+Carpe Diem: 현재를 즐겨라. 기억만으로 이름을 전부 맞혀 보는 게임 퀴즈 사이트입니다.
 
 **▶ 플레이하기: https://5kyr43305.github.io/game-quiz/**
 
-*How well do you know your games? Name every champion, skin line and skin collection from memory. Available in Korean and English.*
+*Carpe Diem: seize the day. Name every champion, skin line and skin collection from memory. Available in Korean and English.*
 
 ## 퀴즈 목록
 
@@ -22,9 +22,11 @@
 | 발로란트 | 요원 랜덤 뽑기 | 2~5명, 역할군(타격대·전략가·감시자·척후대)별 인원을 정해 요원을 랜덤으로 뽑습니다 |
 | 리그 오브 레전드 | 챔피언 랜덤 뽑기 | 2~5명, 주 역할군(암살자·전사·원거리·마법사·탱커·서포터)별 인원을 정해 챔피언을 뽑습니다. 포지션 추첨(포지션만 다시 뽑기 가능)도 가능 |
 
+| 공통 | 내전 도우미 | 이름·티어를 적으면 팀을 나눠 줍니다 (⚖️ 밸런스형: 티어 점수가 비슷하게 / 🎲 즐겜용: 완전 랜덤). 발로란트 맵 뽑기, CPDM 동전 던지기로 선공 정하기 |
+
 두 뽑기 모두 인원 수만큼 참가자 이름을 적을 수 있고, 뽑을 때 참가자와 결과가 무작위로 짝지어집니다.
 
-퀴즈 항목은 추후 업데이트됩니다.
+항목은 추후 업데이트됩니다.
 
 ## 플레이 방법
 
@@ -61,4 +63,4 @@
 
 이 사이트는 비공식 팬 사이트이며, 어떤 게임사의 승인이나 후원도 받지 않았습니다. 각 게임의 이미지, 명칭, 상표에 대한 권리는 해당 게임사에 있습니다.
 
-Game Quiz was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project. League of Legends and VALORANT are trademarks of Riot Games, Inc.
+Carpe Diem was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project. League of Legends and VALORANT are trademarks of Riot Games, Inc.

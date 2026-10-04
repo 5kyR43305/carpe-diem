@@ -52,10 +52,19 @@ a{color:inherit}
 /* ---------- hub ---------- */
 .hero{text-align:center;padding:26px 0 8px}
 .hero h1{margin:0;font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-.02em}
-.hero h1 span{color:var(--accent)}
+/* main title in the logo's colours: purple → violet → pink → orange */
+.hero h1.hero-logo-text{display:inline-block;background:linear-gradient(90deg,#8a00ff 0%,#9d34d6 30%,#d9619e 62%,#f5a20c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .hero p{color:var(--muted);margin:10px 0 0}
 .hero .hero-note{margin-top:4px;font-size:13px;opacity:.8}
-.quiz-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:26px}
+/* home: main (game) / sub (type) category filters */
+.cat-bar{display:grid;gap:8px;margin-top:22px}
+.cat-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cat-label{min-width:34px;font-size:12px;font-weight:900;color:var(--muted)}
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cat-chip{height:34px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:13px;font-weight:800;color:var(--muted);cursor:pointer}
+.cat-chip:hover{color:var(--text)}
+.cat-chip.active{background:linear-gradient(90deg,#8a00ff,#d9619e);border-color:transparent;color:#fff}
+.quiz-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
 .quiz-card{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:220px;padding:18px;border-radius:var(--radius);overflow:hidden;text-decoration:none;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--panel2);isolation:isolate;transition:transform .15s ease,border-color .15s ease}
 .quiz-card:hover{transform:translateY(-3px);border-color:var(--accent)}
 .quiz-card .bg{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:center 25%}
@@ -164,6 +173,58 @@ a{color:inherit}
 /* LoL cards use square splash tiles (opaque art) */
 .rp-card.rp-lol{background:linear-gradient(160deg,#1e2a3a,#121922)}
 .rp-card.rp-lol .rp-portrait{object-fit:cover;border-radius:12px;border:2px solid rgba(200,170,110,.5)}
+/* scrim helper */
+.sc{max-width:900px;margin:0 auto}
+.sc-game{display:flex;justify-content:center;margin:0 0 16px}
+.sc-section{margin-bottom:16px}
+.sc-h{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:18px;font-weight:900}
+.sc-h span:first-child{color:var(--gold)}
+.sc-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 4px}
+.sc-count{display:flex;align-items:center;gap:8px;font-weight:800}
+.sc-mode-tip{text-align:left;margin:4px 0 12px}
+.sc-players{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sc-player{display:flex;align-items:center;gap:6px;min-width:0}
+.sc-num{width:20px;text-align:right;color:var(--muted);font-size:12px;font-weight:800}
+.sc-name.text-input{flex:1;min-width:0;width:auto;height:38px;font-size:14px}
+.sc-tier{height:38px;min-width:0;max-width:130px;padding:0 6px;border:2px solid var(--line);border-radius:10px;background:#0c1219;font-weight:800}
+.sc-actions{display:flex;justify-content:center;margin-top:14px}
+.sc-teams{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.sc-team{padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--panel2)}
+.sc-team.blue{border-top:4px solid #3d8bff}
+.sc-team.red{border-top:4px solid #ff4655}
+.sc-team.pop{animation:pop .35s ease}
+.sc-team h3{margin:0 0 8px;font-size:16px}
+.sc-team.blue h3{color:#7fb2ff}
+.sc-team.red h3{color:#ff8b96}
+.sc-member{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-weight:700}
+.sc-member span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc-chip{flex:none;padding:1px 8px;border:1px solid;border-radius:999px;font-size:12px;font-weight:900}
+.sc-team-foot{margin-top:8px;color:var(--muted);font-size:12.5px;font-weight:700}
+.sc-diff{grid-column:1/-1;margin:0;text-align:center;color:var(--gold);font-weight:800}
+.sc-pool{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.sc-map-chip{position:relative;height:56px;border:2px solid var(--gold);border-radius:10px;background:center/cover no-repeat #0c1219;cursor:pointer;overflow:hidden}
+.sc-map-chip span{position:absolute;inset:auto 0 0 0;padding:3px;background:rgba(0,0,0,.65);font-size:12px;font-weight:900;color:#fff}
+.sc-map-chip.off{border-color:var(--line);filter:grayscale(1) brightness(.45)}
+.sc-map{position:relative;height:200px;margin-top:14px;border-radius:14px;border:1px solid var(--line);background:center/cover no-repeat #0c1219;overflow:hidden}
+.sc-map span{position:absolute;inset:auto 0 0 0;padding:10px;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:28px;font-weight:900;text-align:center}
+.sc-map.rolling{filter:saturate(.5) brightness(.75)}
+.sc-map.pop{animation:pop .35s ease}
+/* coin */
+.coin-wrap{display:flex;justify-content:center;margin:10px 0;perspective:800px}
+.coin{position:relative;width:130px;height:130px;transform-style:preserve-3d;transition:transform 1.6s cubic-bezier(.2,.7,.2,1)}
+.coin-face{position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;backface-visibility:hidden;
+  background:radial-gradient(circle at 35% 30%,#ffe9a8,#d4a43c 55%,#8a6418);border:5px solid #b88a2a;box-shadow:inset 0 0 0 4px rgba(255,255,255,.25),0 8px 18px rgba(0,0,0,.45)}
+.coin-label{font-size:52px;font-weight:900;line-height:1;color:#5a3a06;text-shadow:0 2px 0 rgba(255,255,255,.45)}
+html[lang="en"] .coin-label{font-size:30px}
+.coin-back{transform:rotateY(180deg)}
+.sc-coin-result{min-height:26px;margin:12px 0 0;text-align:center;font-size:17px;font-weight:900;color:var(--gold)}
+.tag.all{color:#c9a0ff}
+.quiz-card.all{background:linear-gradient(135deg,#2a1450,#120a24 70%)}
+/* the CPDM logo sits in the top part of the card, clear of the text */
+.quiz-card.all .bg{object-fit:contain;object-position:center top;padding:22px 26px 108px}
+.quiz-card.all::after{background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.75))}
+/* CPDM logo above the scrim page title */
+.sc-logo{display:block;width:min(260px,70%);height:auto;margin:6px auto 0}
 /* best record */
 .best-line{margin:-6px 0 14px;color:var(--gold);font-weight:700}
 .modal-best{margin:-6px 0 18px;font-weight:800;color:var(--gold)}
@@ -221,6 +282,9 @@ body.hard .hint-text{color:#ff8a5c}
   .champ-grid{grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:4px}
   .champ-grid.grid-tile{grid-template-columns:repeat(auto-fill,minmax(74px,1fr))}
   .rp-roles{grid-template-columns:1fr}
+  .sc-players{grid-template-columns:1fr}
+  .sc-teams{grid-template-columns:1fr}
+  .sc-map{height:150px}
   .rp-result{grid-template-columns:repeat(2,minmax(0,1fr))}
   .tq-title{font-size:26px}
   .tq-form{flex-wrap:wrap}

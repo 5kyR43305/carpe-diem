@@ -4,12 +4,12 @@
 
   App.addStrings({
     ko: {
-      pageTitle: '발로란트 요원 랜덤 뽑기 · Game Quiz',
+      pageTitle: '발로란트 요원 랜덤 뽑기 · Carpe Diem',
       title: '발로란트 요원 랜덤 뽑기',
       sub: '뽑을 인원과 역할군별 인원을 정하고 뽑기를 눌러 보세요.',
     },
     en: {
-      pageTitle: 'VALORANT Random Agent Picker · Game Quiz',
+      pageTitle: 'VALORANT Random Agent Picker · Carpe Diem',
       title: 'VALORANT Random Agent Picker',
       sub: 'Choose how many agents and how many per role, then draw.',
     },

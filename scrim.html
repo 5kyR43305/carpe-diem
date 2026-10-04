@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e13">
+<title>내전 도우미</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/img/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-title-key="pageTitle" data-legal="riot">
+<main class="wrap sc">
+  <img class="sc-logo" src="assets/img/logo.png" alt="CPDM">
+  <h1 class="page-title" data-i18n="title"></h1>
+  <p class="page-sub" data-i18n="sub"></p>
+  <div class="sc-game"><div class="seg" id="gameSeg"></div></div>
+
+  <!-- 1. Teams -->
+  <section class="panel sc-section">
+    <h2 class="sc-h"><span>①</span> <span data-i18n="teamsTitle"></span></h2>
+    <div class="sc-toolbar">
+      <div class="sc-count">
+        <span data-i18n="playerCount"></span>
+        <button type="button" class="btn rp-step" id="countMinus">−</button>
+        <b class="rp-val" id="countVal"></b>
+        <button type="button" class="btn rp-step" id="countPlus">+</button>
+      </div>
+      <div class="seg" id="modeSeg"></div>
+    </div>
+    <p class="tip sc-mode-tip" id="modeTip"></p>
+    <div class="sc-players" id="players"></div>
+    <div class="sc-actions">
+      <button type="button" class="btn btn-primary btn-lg" id="splitBtn" data-i18n="split"></button>
+    </div>
+    <div class="sc-teams" id="teams"></div>
+  </section>
+
+  <!-- 2. Map (VALORANT only) -->
+  <section class="panel sc-section" id="mapSection" hidden>
+    <h2 class="sc-h"><span>②</span> <span data-i18n="mapTitle"></span></h2>
+    <p class="tip" data-i18n="mapTip"></p>
+    <div class="sc-pool" id="mapPool"></div>
+    <div class="sc-actions">
+      <button type="button" class="btn btn-primary btn-lg" id="mapBtn" data-i18n="mapPick"></button>
+    </div>
+    <div class="sc-map" id="mapResult" hidden></div>
+  </section>
+
+  <!-- 3. Coin toss -->
+  <section class="panel sc-section">
+    <h2 class="sc-h"><span id="coinNum">③</span> <span data-i18n="coinTitle"></span></h2>
+    <p class="tip" id="coinTip"></p>
+    <div class="coin-wrap">
+      <div class="coin" id="coin">
+        <div class="coin-face coin-front"><b class="coin-label" data-i18n="headsShort"></b></div>
+        <div class="coin-face coin-back"><b class="coin-label" data-i18n="tailsShort"></b></div>
+      </div>
+    </div>
+    <div class="sc-actions">
+      <button type="button" class="btn btn-primary btn-lg" id="coinBtn" data-i18n="coinFlip"></button>
+    </div>
+    <p class="sc-coin-result" id="coinResult"></p>
+  </section>
+</main>
+
+<script src="assets/js/common.js"></script>
+<script src="assets/js/scrim.js"></script>
+</body>
+</html>

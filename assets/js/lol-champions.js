@@ -4,7 +4,7 @@
 
   App.addStrings({
     ko: {
-      pageTitle: 'LoL 챔피언 이름 맞추기 · Game Quiz',
+      pageTitle: 'LoL 챔피언 이름 맞추기 · Carpe Diem',
       title: '리그 오브 레전드 챔피언 전부 말할 수 있을까?',
       placeholder: '챔피언 이름 입력',
       tip: '챔피언의 한국어 풀네임을 입력하고 Enter 또는 정답 버튼을 누르세요. 첫 정답부터 타이머가 시작됩니다.',
@@ -13,7 +13,7 @@
       clearComments: ['챔피언 도감 그 자체!', '모든 챔피언을 기억하다니, 진정한 소환사네요.', '완벽 클리어! 협곡의 백과사전 인정.'],
     },
     en: {
-      pageTitle: 'Name Every LoL Champion · Game Quiz',
+      pageTitle: 'Name Every LoL Champion · Carpe Diem',
       title: 'Can You Name Every League of Legends Champion?',
       placeholder: 'Type a champion name',
       tip: 'Type the champion\'s full English name and press Enter or the button. The timer starts with your first correct answer.',

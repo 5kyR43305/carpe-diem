@@ -4,7 +4,7 @@
 
   App.addStrings({
     ko: {
-      pageTitle: 'LoL 스킨 세트 이름 맞추기 · Game Quiz',
+      pageTitle: 'LoL 스킨 세트 이름 맞추기 · Carpe Diem',
       title: '리그 오브 레전드 스킨 세트 전부 말할 수 있을까?',
       placeholder: '스킨 세트 이름 입력',
       tip: '스킨 세트(스킨 라인)의 한국어 이름을 입력하고 Enter 또는 정답 버튼을 누르세요.',
@@ -13,7 +13,7 @@
       clearComments: ['스킨 세트 박사 인정!', '모든 세트를 기억하다니, 상점의 VIP네요.', '완벽 클리어! 컬렉션 마스터.'],
     },
     en: {
-      pageTitle: 'Name Every LoL Skin Line · Game Quiz',
+      pageTitle: 'Name Every LoL Skin Line · Carpe Diem',
       title: 'Can You Name Every League of Legends Skin Line?',
       placeholder: 'Type a skin line name',
       tip: 'Type the English name of a skin line and press Enter or the button.',

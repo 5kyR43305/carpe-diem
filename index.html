@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0e13">
 <meta name="description" content="League of Legends & VALORANT fan quizzes · 리그 오브 레전드 & 발로란트 팬 퀴즈">
-<title>Game Quiz</title>
+<title>Carpe Diem</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/img/favicon-192.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
@@ -14,11 +14,16 @@
 <body data-title-key="hubTitle">
 <main class="wrap">
   <section class="hero">
-    <h1>Game <span>Quiz</span></h1>
+    <h1 class="hero-logo-text">CPDM</h1>
     <p data-i18n="hubSub"></p>
     <p class="hero-note" data-i18n="hubNote"></p>
   </section>
+  <nav class="cat-bar" aria-label="categories">
+    <div class="cat-row"><span class="cat-label" data-i18n="catMain"></span><div class="cat-chips" id="mainCats"></div></div>
+    <div class="cat-row"><span class="cat-label" data-i18n="catSub"></span><div class="cat-chips" id="subCats"></div></div>
+  </nav>
   <section class="quiz-list" id="quizList"></section>
+  <p class="status" id="emptyMsg" data-i18n="catEmpty" hidden></p>
 </main>
 
 <script src="assets/js/common.js"></script>
@@ -26,14 +31,53 @@
 <script>
 (function () {
   App.addStrings({
-    ko: { hubTitle: 'Game Quiz · 리그 오브 레전드 & 발로란트', hubSub: '게임에 대해 얼마나 알고 계신가요?', hubNote: '(퀴즈 항목은 추후 업데이트됩니다.)' },
-    en: { hubTitle: 'Game Quiz · League of Legends & VALORANT', hubSub: 'How well do you know your games?', hubNote: '(More quizzes coming soon)' },
+    ko: {
+      hubTitle: 'Carpe Diem · 리그 오브 레전드 & 발로란트', hubSub: 'Carpe Diem: 현재를 즐겨라', hubNote: '(항목은 추후 업데이트됩니다.)',
+      catMain: '게임', catSub: '분류', catAll: '전체', catLol: '리그 오브 레전드', catVal: '발로란트',
+      catQuiz: '퀴즈', catEtc: '기타 (뽑기·도구)', catEmpty: '해당하는 항목이 아직 없어요.',
+    },
+    en: {
+      hubTitle: 'Carpe Diem · League of Legends & VALORANT', hubSub: 'Carpe Diem: Seize the day', hubNote: '(More coming soon)',
+      catMain: 'Game', catSub: 'Type', catAll: 'All', catLol: 'League of Legends', catVal: 'VALORANT',
+      catQuiz: 'Quizzes', catEtc: 'Other (pickers & tools)', catEmpty: 'Nothing here yet.',
+    },
   });
+
+  // Main category = game ('all' items show under every game); sub category = quiz / other.
+  const MAIN = [['all', 'catAll'], ['lol', 'catLol'], ['val', 'catVal']];
+  const SUB = [['all', 'catAll'], ['quiz', 'catQuiz'], ['etc', 'catEtc']];
+  const FILTER_KEY = 'rq-home-filter';
+  let filter = { main: 'all', sub: 'all' };
+  try { filter = Object.assign(filter, JSON.parse(localStorage.getItem(FILTER_KEY)) || {}); } catch (e) { /* ignore */ }
+
+  function chips(boxId, options, key) {
+    const box = document.getElementById(boxId);
+    box.innerHTML = '';
+    options.forEach(([value, label]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cat-chip';
+      b.textContent = App.t(label);
+      b.classList.toggle('active', filter[key] === value);
+      b.addEventListener('click', () => {
+        filter[key] = value;
+        try { localStorage.setItem(FILTER_KEY, JSON.stringify(filter)); } catch (e) { /* ignore */ }
+        render();
+      });
+      box.appendChild(b);
+    });
+  }
 
   const list = document.getElementById('quizList');
   function render() {
+    chips('mainCats', MAIN, 'main');
+    chips('subCats', SUB, 'sub');
     list.innerHTML = '';
-    window.QUIZZES.forEach((q) => {
+    const shown = window.QUIZZES.filter((q) =>
+      (filter.main === 'all' || q.game === filter.main || q.game === 'all') &&
+      (filter.sub === 'all' || q.type === filter.sub));
+    document.getElementById('emptyMsg').hidden = shown.length > 0;
+    shown.forEach((q) => {
       const a = document.createElement('a');
       a.className = 'quiz-card ' + q.game;
       a.href = q.href;

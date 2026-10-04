@@ -1,12 +1,14 @@
 /*
  * Quiz registry shown on the home page.
  * To add a quiz: create a new page (copy an existing one) and add an entry here.
- *   game: 'lol' | 'val'  (controls the tag colour)
+ *   game: 'lol' | 'val' | 'all'  (main category + tag colour; 'all' = shown under every game)
+ *   type: 'quiz' | 'etc'          (sub category: quizzes / other tools such as random pickers)
  *   image: optional background image URL
  */
 window.QUIZZES = [
   {
     href: 'lol-champions.html',
+    type: 'quiz',
     game: 'lol',
     tag: { ko: '리그 오브 레전드', en: 'League of Legends' },
     title: { ko: '챔피언 이름 맞추기', en: 'Name Every Champion' },
@@ -18,6 +20,7 @@ window.QUIZZES = [
   },
   {
     href: 'lol-titles.html',
+    type: 'quiz',
     game: 'lol',
     tag: { ko: '리그 오브 레전드', en: 'League of Legends' },
     title: { ko: '챔피언 칭호 맞추기', en: 'Champions by Title' },
@@ -29,6 +32,7 @@ window.QUIZZES = [
   },
   {
     href: 'valorant-collections.html',
+    type: 'quiz',
     game: 'val',
     tag: { ko: '발로란트', en: 'VALORANT' },
     title: { ko: '스킨 컬렉션 이름 맞추기', en: 'Name Every Skin Collection' },
@@ -40,6 +44,7 @@ window.QUIZZES = [
   },
   {
     href: 'lol-skinlines.html',
+    type: 'quiz',
     game: 'lol',
     tag: { ko: '리그 오브 레전드', en: 'League of Legends' },
     title: { ko: '스킨 세트 이름 맞추기', en: 'Name Every Skin Line' },
@@ -52,6 +57,7 @@ window.QUIZZES = [
   // Tools (not quizzes)
   {
     href: 'valorant-random.html',
+    type: 'etc',
     game: 'val',
     tag: { ko: '발로란트', en: 'VALORANT' },
     title: { ko: '요원 랜덤 뽑기', en: 'Random Agent Picker' },
@@ -63,6 +69,7 @@ window.QUIZZES = [
   },
   {
     href: 'lol-random.html',
+    type: 'etc',
     game: 'lol',
     tag: { ko: '리그 오브 레전드', en: 'League of Legends' },
     title: { ko: '챔피언 랜덤 뽑기', en: 'Random Champion Picker' },
@@ -71,5 +78,17 @@ window.QUIZZES = [
       en: 'Set the team size and main roles, then draw random champions. Positions too.',
     },
     image: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Teemo_0.jpg',
+  },
+  {
+    href: 'scrim.html',
+    type: 'etc',
+    game: 'all',
+    tag: { ko: '내전', en: 'Custom games' },
+    title: { ko: '내전 도우미', en: 'Custom Game Helper' },
+    desc: {
+      ko: '티어 밸런스 팀 나누기, 맵 뽑기, CPDM 동전으로 선공 정하기.',
+      en: 'Tier-balanced teams, random maps and a CPDM coin toss for who starts.',
+    },
+    image: 'assets/img/logo.png',
   },
 ];
