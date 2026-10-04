@@ -49,4 +49,27 @@ window.QUIZZES = [
     },
     image: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jinx_1.jpg',
   },
+  // Tools (not quizzes)
+  {
+    href: 'valorant-random.html',
+    game: 'val',
+    tag: { ko: '발로란트', en: 'VALORANT' },
+    title: { ko: '요원 랜덤 뽑기', en: 'Random Agent Picker' },
+    desc: {
+      ko: '인원과 역할군을 정하고 요원을 랜덤으로 뽑아 보세요.',
+      en: 'Set the team size and roles, then draw random agents.',
+    },
+    image: 'https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/fullportrait.png',
+  },
+  {
+    href: 'lol-random.html',
+    game: 'lol',
+    tag: { ko: '리그 오브 레전드', en: 'League of Legends' },
+    title: { ko: '챔피언 랜덤 뽑기', en: 'Random Champion Picker' },
+    desc: {
+      ko: '인원과 주 역할군을 정하고 챔피언을 랜덤으로 뽑아 보세요. 포지션 추첨도 가능해요.',
+      en: 'Set the team size and main roles, then draw random champions. Positions too.',
+    },
+    image: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Teemo_0.jpg',
+  },
 ];
